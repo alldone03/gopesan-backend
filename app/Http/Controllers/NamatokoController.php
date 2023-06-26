@@ -13,7 +13,10 @@ class NamatokoController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'success',
+            'data' => namatoko::all(),
+        ], 200);
     }
 
     /**
@@ -21,7 +24,6 @@ class NamatokoController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -29,7 +31,16 @@ class NamatokoController extends Controller
      */
     public function store(StorenamatokoRequest $request)
     {
-        //
+        $validated = $request->validated([
+            'nama_toko' => 'required|unique:namatokos,namatoko',
+        ]);
+        namatoko::create([
+            'namatoko' => $validated['nama_toko'],
+        ]);
+
+        return response()->json([
+            'message' => 'Data berhasil ditambahkan',
+        ], 201);
     }
 
     /**
@@ -37,7 +48,6 @@ class NamatokoController extends Controller
      */
     public function show(namatoko $namatoko)
     {
-        //
     }
 
     /**
@@ -46,6 +56,7 @@ class NamatokoController extends Controller
     public function edit(namatoko $namatoko)
     {
         //
+
     }
 
     /**
@@ -54,6 +65,7 @@ class NamatokoController extends Controller
     public function update(UpdatenamatokoRequest $request, namatoko $namatoko)
     {
         //
+
     }
 
     /**
@@ -62,5 +74,6 @@ class NamatokoController extends Controller
     public function destroy(namatoko $namatoko)
     {
         //
+
     }
 }
