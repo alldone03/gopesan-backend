@@ -31,23 +31,28 @@ class NamatokoController extends Controller
      */
     public function store(StorenamatokoRequest $request)
     {
-        $validated = $request->validated([
-            'nama_toko' => 'required|unique:namatokos,namatoko',
+        $validated = $request->validate([
+            'namatoko' => 'required|String|unique:namatokos,namatoko',
         ]);
-        namatoko::create([
-            'namatoko' => $validated['nama_toko'],
+        $hasil = namatoko::create([
+            'namatoko' => $validated['namatoko'],
         ]);
-
-        return response()->json([
-            'message' => 'Data berhasil ditambahkan',
-        ], 201);
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal ditambahkan',
+            ], 400);
+        else
+            return response()->json([
+                'message' => 'Data berhasil ditambahkan',
+            ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(namatoko $namatoko)
     {
+        return response()->json([
+            'message' => 'success',
+            'data' => $namatoko,
+        ], 200);
     }
 
     /**
@@ -55,17 +60,25 @@ class NamatokoController extends Controller
      */
     public function edit(namatoko $namatoko)
     {
-        //
-
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatenamatokoRequest $request, namatoko $namatoko)
-    {
-        //
 
+    public function update(UpdatenamatokoRequest $request)
+    {
+        $validated = $request->validate([
+            'namatoko' => 'required|String',
+        ]);
+        $hasil = namatoko::find(request()->id)->update([
+            'namatoko' => $validated['namatoko'],
+        ]);
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal diubah',
+            ], 400);
+        else
+            return response()->json([
+                'message' => 'Data berhasil Diubah',
+            ], 200);
     }
 
     /**
@@ -73,7 +86,15 @@ class NamatokoController extends Controller
      */
     public function destroy(namatoko $namatoko)
     {
-        //
-
+        $hasil = $namatoko->delete();
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal dihapus',
+            ], 400);
+        else {
+            return response()->json([
+                'message' => 'Data berhasil dihapus',
+            ], 200);
+        }
     }
 }

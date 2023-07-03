@@ -15,20 +15,32 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $user = User::where('email', $validate['email'])->first();
-        if (!$user || !Hash::check($validate['password'], $user->password)) {
+
+        if (Auth::attempt($validate)) {
+            $user = Auth::user();
+            $token = $user->createToken('token')->plainTextToken;
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
             return response()->json([
-                'message' => 'Login failed'
-            ], 401);
+                'message' => 'Login success', ...$response
+            ], 200);
         }
-        $token = $user->createToken('token')->plainTextToken;
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-        return response()->json([
-            'message' => 'Login success', ...$response
-        ], 200);
+        // $user = User::where('email', $validate['email'])->first();
+        // if (!$user || !Hash::check($validate['password'], $user->password)) {
+        //     return response()->json([
+        //         'message' => 'Login failed'
+        //     ], 401);
+        // }
+        // $token = $user->createToken('token')->plainTextToken;
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
+        // return response()->json([
+        //     'message' => 'Login success', ...$response
+        // ], 200);
     }
     function register(): mixed
     {

@@ -25,17 +25,17 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/register', [LoginController::class, 'register'])->name('register');
 
 
-Route::middleware(['auth:sanctum', 'ability:check-status,place-orders'])->group(
+Route::middleware('auth:sanctum')->group(
     function () {
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
         Route::post('/getuserdata', [LoginController::class, 'getuserdata']);
         Route::prefix('/namatoko')->controller(NamatokoController::class)->group(function () {
-            Route::get('/', 'index');
-            Route::post('/', 'store');
+            Route::get('', 'index');
+            Route::post('', 'store');
             Route::get('/{namatoko}', 'show');
-            Route::put('/{namatoko}', 'update');
+            Route::put('', 'update');
             Route::delete('/{namatoko}', 'destroy');
         });
     }
-    // Route::resource('/namatoko', NamatokoController::class, ['except' => ['create']]);
+
 );
