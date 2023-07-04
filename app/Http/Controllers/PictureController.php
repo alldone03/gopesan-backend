@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorepictureRequest;
 use App\Http\Requests\UpdatepictureRequest;
 use App\Models\picture;
+use Intervention\Image\Facades\Image as convertImage;
+use Illuminate\Support\Facades\File;
+
 
 class PictureController extends Controller
 {
@@ -13,7 +16,10 @@ class PictureController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'success',
+            'data' => picture::all(),
+        ], 200);
     }
 
     /**
@@ -29,7 +35,32 @@ class PictureController extends Controller
      */
     public function store(StorepictureRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'keterangan' => 'required|String',
+            'id_jenismakanan' => 'required|integer',
+            'id_varian' => 'required|integer',
+            'id_toko' => 'required|integer',
+        ]);
+
+        $webp_image = convertImage::make($request->file('file'))->encode('webp', 90)->save('storage/images/' . $request->file('file')->hashName() . '.webp');
+
+        $hasil = picture::create([
+            'file' => $webp_image->basePath(),
+            'keterangan' => $validated['keterangan'],
+            'id_jenismakanan' => $validated['id_jenismakanan'],
+            'id_varian' => $validated['id_varian'],
+            'id_toko' => $validated['id_toko'],
+        ]);
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal ditambahkan',
+            ], 400);
+        else
+            return response()->json([
+                'message' => 'Data berhasil ditambahkan',
+                // 'data' =>  $request->getHttpHost() . "/" . $webp_image->basePath()
+            ], 201);
     }
 
     /**
@@ -37,7 +68,10 @@ class PictureController extends Controller
      */
     public function show(picture $picture)
     {
-        //
+        return response()->json([
+            'message' => 'success',
+            'data' => $picture,
+        ], 200);
     }
 
     /**
@@ -45,7 +79,10 @@ class PictureController extends Controller
      */
     public function edit(picture $picture)
     {
-        //
+        return response()->json([
+            'message' => 'success',
+            'data' => $picture,
+        ], 200);
     }
 
     /**
@@ -53,7 +90,34 @@ class PictureController extends Controller
      */
     public function update(UpdatepictureRequest $request, picture $picture)
     {
-        //
+        dd($request->all());
+        $validated = $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'keterangan' => 'required|String',
+            'id_jenismakanan' => 'required|integer',
+            'id_varian' => 'required|integer',
+            'id_toko' => 'required|integer',
+        ]);
+        unlink(public_path($picture->file));
+
+        $webp_image = convertImage::make($request->file('file'))->encode('webp', 90)->save('storage/images/' . $request->file('file')->hashName() . '.webp');
+
+
+        $hasil = $picture->update([
+            'file' => $webp_image->basePath(),
+            'keterangan' => $validated['keterangan'],
+            'id_jenismakanan' => $validated['id_jenismakanan'],
+            'id_varian' => $validated['id_varian'],
+            'id_toko' => $validated['id_toko'],
+        ]);
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal diubah',
+            ], 400);
+        else
+            return response()->json([
+                'message' => 'Data berhasil Diubah',
+            ], 200);
     }
 
     /**
@@ -61,6 +125,16 @@ class PictureController extends Controller
      */
     public function destroy(picture $picture)
     {
-        //
+        unlink(public_path($picture->file));
+        $hasil = $picture->delete();
+        if (!$hasil)
+            return response()->json([
+                'message' => 'Data gagal dihapus',
+            ], 400);
+        else {
+            return response()->json([
+                'message' => 'Data berhasil dihapus',
+            ], 200);
+        }
     }
 }

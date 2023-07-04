@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pictures', function (Blueprint $table) {
+        Schema::create('varians', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_toko')->unsigned();
-            $table->bigInteger('id_jenismakanan')->unsigned();
-            $table->bigInteger('id_varian')->unsigned();
-            $table->string('file');
-            $table->string('keterangan');
+            $table->string('varian');
+            $table->bigInteger('id_menu')->unsigned();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pictures');
+        Schema::dropIfExists('varians');
     }
 };

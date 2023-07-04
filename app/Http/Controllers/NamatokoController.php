@@ -60,17 +60,20 @@ class NamatokoController extends Controller
      */
     public function edit(namatoko $namatoko)
     {
+        return response()->json([
+            'message' => 'success',
+            'data' => $namatoko,
+        ], 200);
     }
 
 
-    public function update(UpdatenamatokoRequest $request)
+    public function update(UpdatenamatokoRequest $request, namatoko $namatoko)
     {
         $validated = $request->validate([
             'namatoko' => 'required|String',
         ]);
-        $hasil = namatoko::find(request()->id)->update([
-            'namatoko' => $validated['namatoko'],
-        ]);
+
+        $hasil = $namatoko->update(['namatoko' => $validated['namatoko']]);
         if (!$hasil)
             return response()->json([
                 'message' => 'Data gagal diubah',

@@ -1,7 +1,11 @@
 <?php
 
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HargaController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\NamatokoController;
+use App\Http\Controllers\PictureController;
+use App\Http\Controllers\VarianController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,21 +25,20 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::post('/login', [LoginController::class, 'login'])->name('login');
-Route::post('/register', [LoginController::class, 'register'])->name('register');
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
+Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
 
 
 Route::middleware('auth:sanctum')->group(
     function () {
-        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-        Route::post('/getuserdata', [LoginController::class, 'getuserdata']);
-        Route::prefix('/namatoko')->controller(NamatokoController::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('', 'store');
-            Route::get('/{namatoko}', 'show');
-            Route::put('', 'update');
-            Route::delete('/{namatoko}', 'destroy');
-        });
+        Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('/getuserdata', [AuthController::class, 'getuserdata']);
+        Route::put('/auth/update/{user}', [AuthController::class, 'update']);
+        Route::resource('/namatoko', NamatokoController::class, ['create']);
+        Route::resource('/menu', MenuController::class, ['create']);
+        Route::resource('/varian', VarianController::class, ['create']);
+        Route::resource('/harga', HargaController::class, ['create']);
+        Route::resource('/picture', PictureController::class, ['create']);
     }
 
 );

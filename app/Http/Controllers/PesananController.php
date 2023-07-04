@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoremenuRequest;
-use App\Http\Requests\UpdatemenuRequest;
-use App\Models\menu;
+use App\Http\Requests\StorepesananRequest;
+use App\Http\Requests\UpdatepesananRequest;
+use App\Models\pesanan;
 
-class MenuController extends Controller
+class PesananController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class MenuController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'data' => menu::all(),
+            'data' => pesanan::all(),
         ], 200);
     }
 
@@ -24,22 +24,31 @@ class MenuController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoremenuRequest $request)
+    public function store(StorepesananRequest $request)
     {
         $validated = $request->validate([
-            'namamenu' => 'required|String|unique:menus,namamenu',
-            'id_namatoko' => 'required|integer',
+            'id_user' => 'required|integer',
+            'id_toko' => 'required|integer',
+            'id_menu' => 'required|integer',
+            'id_varian' => 'required|integer',
             'id_jenismakanan' => 'required|integer',
+            'id_harga' => 'required|integer',
+
         ]);
-        $hasil = menu::create([
-            'namamenu' => $validated['namamenu'],
-            'id_namatoko' => $validated['id_namatoko'],
+        $hasil = pesanan::create([
+            'id_user' => $validated['id_user'],
+            'id_toko' => $validated['id_toko'],
+            'id_menu' => $validated['id_menu'],
+            'id_varian' => $validated['id_varian'],
             'id_jenismakanan' => $validated['id_jenismakanan'],
+            'id_harga' => $validated['id_harga'],
+
         ]);
         if (!$hasil)
             return response()->json([
@@ -54,39 +63,46 @@ class MenuController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(menu $menu)
+    public function show(pesanan $pesanan)
     {
         return response()->json([
             'message' => 'success',
-            'data' => $menu,
+            'data' => $pesanan,
         ], 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(menu $menu)
+    public function edit(pesanan $pesanan)
     {
         return response()->json([
             'message' => 'success',
-            'data' => $menu,
+            'data' => $pesanan,
         ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatemenuRequest $request, menu $menu)
+    public function update(UpdatepesananRequest $request, pesanan $pesanan)
     {
         $validated = $request->validate([
-            'namamenu' => 'required|String',
-            'id_namatoko' => 'required|integer',
+            'id_user' => 'required|integer',
+            'id_toko' => 'required|integer',
+            'id_menu' => 'required|integer',
+            'id_varian' => 'required|integer',
             'id_jenismakanan' => 'required|integer',
+            'id_harga' => 'required|integer',
+
         ]);
-        $hasil = $menu->update([
-            'namamenu' => $validated['namamenu'],
-            'id_namatoko' => $validated['id_namatoko'],
+        $hasil = $pesanan->update([
+            'id_user' => $validated['id_user'],
+            'id_toko' => $validated['id_toko'],
+            'id_menu' => $validated['id_menu'],
+            'id_varian' => $validated['id_varian'],
             'id_jenismakanan' => $validated['id_jenismakanan'],
+            'id_harga' => $validated['id_harga'],
 
         ]);
         if (!$hasil)
@@ -102,9 +118,9 @@ class MenuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(menu $menu)
+    public function destroy(pesanan $pesanan)
     {
-        $hasil = $menu->delete();
+        $hasil = $pesanan->delete();
         if (!$hasil)
             return response()->json([
                 'message' => 'Data gagal dihapus',

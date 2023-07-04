@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoremenuRequest;
-use App\Http\Requests\UpdatemenuRequest;
-use App\Models\menu;
+use App\Http\Requests\StorevarianRequest;
+use App\Http\Requests\UpdatevarianRequest;
+use App\Models\varian;
 
-class MenuController extends Controller
+class VarianController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class MenuController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'data' => menu::all(),
+            'data' => varian::all(),
         ], 200);
     }
 
@@ -24,22 +24,21 @@ class MenuController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoremenuRequest $request)
+    public function store(StorevarianRequest $request)
     {
         $validated = $request->validate([
-            'namamenu' => 'required|String|unique:menus,namamenu',
-            'id_namatoko' => 'required|integer',
-            'id_jenismakanan' => 'required|integer',
+            'varian' => 'required|String',
+            'id_menu' => 'required|integer',
         ]);
-        $hasil = menu::create([
-            'namamenu' => $validated['namamenu'],
-            'id_namatoko' => $validated['id_namatoko'],
-            'id_jenismakanan' => $validated['id_jenismakanan'],
+        $hasil = varian::create([
+            'varian' => $validated['varian'],
+            'id_menu' => $validated['id_menu'],
         ]);
         if (!$hasil)
             return response()->json([
@@ -54,39 +53,38 @@ class MenuController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(menu $menu)
+    public function show(varian $varian)
     {
         return response()->json([
             'message' => 'success',
-            'data' => $menu,
+            'data' => $varian,
         ], 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(menu $menu)
+    public function edit(varian $varian)
     {
         return response()->json([
             'message' => 'success',
-            'data' => $menu,
+            'data' => $varian,
         ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatemenuRequest $request, menu $menu)
+    public function update(UpdatevarianRequest $request, varian $varian)
     {
         $validated = $request->validate([
-            'namamenu' => 'required|String',
-            'id_namatoko' => 'required|integer',
-            'id_jenismakanan' => 'required|integer',
+            'varian' => 'required|String',
+            'id_menu' => 'required|integer',
+
         ]);
-        $hasil = $menu->update([
-            'namamenu' => $validated['namamenu'],
-            'id_namatoko' => $validated['id_namatoko'],
-            'id_jenismakanan' => $validated['id_jenismakanan'],
+        $hasil = $varian->update([
+            'varian' => $validated['varian'],
+            'id_menu' => $validated['id_menu'],
 
         ]);
         if (!$hasil)
@@ -102,9 +100,9 @@ class MenuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(menu $menu)
+    public function destroy(varian $varian)
     {
-        $hasil = $menu->delete();
+        $hasil = $varian->delete();
         if (!$hasil)
             return response()->json([
                 'message' => 'Data gagal dihapus',

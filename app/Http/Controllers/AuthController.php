@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
-class LoginController extends Controller
+
+class AuthController extends Controller
 {
     function login(): mixed
     {
-        $validate = request()->validate([
+        $validated = request()->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
+        // dd($validated);
 
-        if (Auth::attempt($validate)) {
+        if (Auth::attempt($validated)) {
             $user = Auth::user();
             $token = $user->createToken('token')->plainTextToken;
             $response = [
@@ -27,28 +28,43 @@ class LoginController extends Controller
                 'message' => 'Login success', ...$response
             ], 200);
         }
-        // $user = User::where('email', $validate['email'])->first();
-        // if (!$user || !Hash::check($validate['password'], $user->password)) {
-        //     return response()->json([
-        //         'message' => 'Login failed'
-        //     ], 401);
-        // }
-        // $token = $user->createToken('token')->plainTextToken;
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
-        // return response()->json([
-        //     'message' => 'Login success', ...$response
-        // ], 200);
+        return response()->json([
+            'message' => 'Login failed'
+        ], 400);
     }
+    function update(User $user, Request $request): mixed
+    {
+        if (auth()->user()->id != $user->id) {
+            return response()->json([
+                'message' => 'update register failed'
+            ], 400);
+        }
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required',
+        ]);
+        $hasil = $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+        ]);
+        if (!$hasil) {
+            return response()->json([
+                'message' => 'update register failed'
+            ], 400);
+        } else
+            return response()->json([
+                'message' => 'Update register success'
+            ], 200);
+    }
+
     function register(): mixed
     {
         $validate = request()->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-
         ]);
         User::create([
             'name' => $validate['name'],
@@ -64,15 +80,14 @@ class LoginController extends Controller
     {
         $user = request()->user();
         $status = $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
-        if ($status) {
+        if ($status)
             return response()->json([
                 'message' => "Berhasil logout",
             ], 200);
-        } else {
+        else
             return response()->json([
                 'message' => "Gagal logout",
             ], 403);
-        }
     }
     function getuserdata(): mixed
     {
