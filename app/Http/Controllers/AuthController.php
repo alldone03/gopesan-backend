@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\userpicture;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image as convertImage;
 
 
 class AuthController extends Controller
@@ -15,13 +17,14 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        // dd($validated);
+
 
         if (Auth::attempt($validated)) {
             $user = Auth::user();
             $token = $user->createToken('token')->plainTextToken;
             $response = [
-                'user' => $user,
+                'user' => User::find($user->id),
+                'mydata' => "hello",
                 'token' => $token
             ];
             return response()->json([
@@ -32,6 +35,7 @@ class AuthController extends Controller
             'message' => 'Login failed'
         ], 400);
     }
+
     function update(User $user, Request $request): mixed
     {
         if (auth()->user()->id != $user->id) {
@@ -39,23 +43,34 @@ class AuthController extends Controller
                 'message' => 'update register failed'
             ], 400);
         }
+
+        // dd($request);
         $validated = $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
             'password' => 'required',
+            'file' => 'image|mimes:jpeg,png,jpg,gif,svg',
         ]);
+        if ($user->pathuserpicture) {
+            unlink($user->pathuserpicture);
+        }
+        $webp_image = convertImage::make($request->file('file'))->encode('webp', 90)->save('storage/images/' . $request->file('file')->hashName() . '.webp');
+
         $hasil = $user->update([
             'name' => $validated['name'],
-            'email' => $validated['email'],
+            'email' => $user['email'],
             'password' => bcrypt($validated['password']),
+            'pathuserpicture' => $webp_image->basePath(),
         ]);
+
+
         if (!$hasil) {
             return response()->json([
                 'message' => 'update register failed'
             ], 400);
         } else
             return response()->json([
-                'message' => 'Update register success'
+                'message' => 'Update register success ',
+                'data' => $webp_image->basePath(),
             ], 200);
     }
 

@@ -70,7 +70,7 @@ class NamatokoController extends Controller
     public function update(UpdatenamatokoRequest $request, namatoko $namatoko)
     {
         $validated = $request->validate([
-            'namatoko' => 'required|String',
+            'namatoko' => 'String',
         ]);
 
         $hasil = $namatoko->update(['namatoko' => $validated['namatoko']]);

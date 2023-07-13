@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
+//     return $request->userp();
 // });
 
 
@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')->group(
     function () {
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
         Route::post('/getuserdata', [AuthController::class, 'getuserdata']);
-        Route::put('/auth/update/{user}', [AuthController::class, 'update']);
+        Route::post('/auth/update/{user}', [AuthController::class, 'update'])->name('updateuser');
         Route::resource('/namatoko', NamatokoController::class, ['create']);
         Route::resource('/menu', MenuController::class, ['create']);
         Route::resource('/varian', VarianController::class, ['create']);
