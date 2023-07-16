@@ -13,7 +13,10 @@ class JenismakananController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'success',
+            'data' => jenismakanan::all(),
+        ], 200);
     }
 
     /**
