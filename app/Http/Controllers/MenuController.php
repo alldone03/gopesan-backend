@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoremenuRequest;
 use App\Http\Requests\UpdatemenuRequest;
 use App\Models\menu;
+use Illuminate\Support\Facades\DB;
 
 class MenuController extends Controller
 {
@@ -13,9 +14,15 @@ class MenuController extends Controller
      */
     public function index()
     {
+
+        // dd(DB::query(DB::table('menus')->from('menus')->join('namatokos', 'menus.id_namatoko', '=', 'namatokos.id')->join('jenismakanans', 'menus.id_jenismakanan', '=', 'jenismakanans.id'))->select('*', 'menus.id as menu_id')->get());
+        // dd(DB::raw('select *,menus.id as toko_id from menus,namatokos,jenismakanans where menus.id_namatoko=namatokos.id and menus.id_jenismakanan=jenismakanans.id;'));
+        // dd(DB::query(DB::raw('select *,menus.id as toko_id from menus,namatokos,jenismakanans where menus.id_namatoko=namatokos.id and menus.id_jenismakanan=jenismakanans.id;'))->get());
+        $mydataarr = [];
+        $data = menu::join('namatokos', 'menus.id_namatoko', '=', 'namatokos.id')->join('jenismakanans', 'menus.id_jenismakanan', '=', 'jenismakanans.id')->select("menus.*", "jenismakanans.jenismakanan", "namatokos.*")->get();
         return response()->json([
             'message' => 'success',
-            'data' => menu::all(),
+            'data' => $data,
         ], 200);
     }
 
@@ -32,7 +39,7 @@ class MenuController extends Controller
     public function store(StoremenuRequest $request)
     {
         $validated = $request->validate([
-            'namamenu' => 'required|String|unique:menus,namamenu',
+            'namamenu' => 'required|String',
             'id_namatoko' => 'required|integer',
             'id_jenismakanan' => 'required|integer',
         ]);

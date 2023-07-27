@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorevarianRequest;
 use App\Http\Requests\UpdatevarianRequest;
+use App\Models\menu;
+use App\Models\namatoko;
 use App\Models\varian;
 
 class VarianController extends Controller
@@ -15,7 +17,7 @@ class VarianController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'data' => varian::all(),
+            'data' => varian::join('menus', 'varians.id_menu', '=', 'menus.id')->join('namatokos', 'varians.id_toko', '=', 'namatokos.id')->select("varians.*", "menus.namamenu", 'namatokos.namatoko')->get()
         ], 200);
     }
 
@@ -36,9 +38,12 @@ class VarianController extends Controller
             'varian' => 'required|String',
             'id_menu' => 'required|integer',
         ]);
+        $dataMenu = menu::find($validated['id_menu']);
+
         $hasil = varian::create([
             'varian' => $validated['varian'],
             'id_menu' => $validated['id_menu'],
+            'id_toko' => $dataMenu->id_namatoko,
         ]);
         if (!$hasil)
             return response()->json([

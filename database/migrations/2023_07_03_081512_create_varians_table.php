@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('varian');
             $table->bigInteger('id_menu')->unsigned();
+            $table->bigInteger('id_toko')->unsigned();
             $table->timestamps();
         });
     }
