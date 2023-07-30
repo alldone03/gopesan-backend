@@ -19,7 +19,7 @@ class MenuController extends Controller
         // dd(DB::raw('select *,menus.id as toko_id from menus,namatokos,jenismakanans where menus.id_namatoko=namatokos.id and menus.id_jenismakanan=jenismakanans.id;'));
         // dd(DB::query(DB::raw('select *,menus.id as toko_id from menus,namatokos,jenismakanans where menus.id_namatoko=namatokos.id and menus.id_jenismakanan=jenismakanans.id;'))->get());
         $mydataarr = [];
-        $data = menu::join('namatokos', 'menus.id_namatoko', '=', 'namatokos.id')->join('jenismakanans', 'menus.id_jenismakanan', '=', 'jenismakanans.id')->select("menus.*", "jenismakanans.jenismakanan", "namatokos.*")->get();
+        $data = menu::join('namatokos', 'menus.id_namatoko', '=', 'namatokos.id')->join('jenismakanans', 'menus.id_jenismakanan', '=', 'jenismakanans.id')->select("menus.*", "jenismakanans.jenismakanan", "namatokos.namatoko")->get();
         return response()->json([
             'message' => 'success',
             'data' => $data,
